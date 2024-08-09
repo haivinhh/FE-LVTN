@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+
 import {
   Container,
   Row,
@@ -9,6 +10,7 @@ import {
   Button,
   InputGroup,
   Table,
+  Modal
 } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
@@ -21,7 +23,8 @@ import {
   getCart,
   changePassword,
   updateUser,
-  getDetailCartOfUser
+  getDetailCartOfUser,
+  cancelOrder,
 } from "../redux/apiRequest";
 import "../CSS/profilecus.css";
 import edit from "../Icon/edit.png";
@@ -42,6 +45,8 @@ const ProfileCustomer = () => {
   const [passwordChangeMessage, setPasswordChangeMessage] = useState("");
   const [updateSuccessMessage, setUpdateSuccessMessage] = useState("");
   const [updateErrorMessage, setUpdateErrorMessage] = useState("");
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [orderToCancel, setOrderToCancel] = useState(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const axiosJWT = createAxios(customer, dispatch, loginSuccess);
@@ -83,8 +88,6 @@ const ProfileCustomer = () => {
     fetchCartData();
   }, [dispatch]);
 
- 
-
   const customerInfo = customerData[0] || {};
 
   const labelMapping = {
@@ -104,8 +107,12 @@ const ProfileCustomer = () => {
   const handleOrderDetailClick = async (idDonHang) => {
     try {
       // Send request to the server with idDonHang
-      const response = await getDetailCartOfUser(idDonHang, customer.accessToken, axiosJWT);
-  
+      const response = await getDetailCartOfUser(
+        idDonHang,
+        customer.accessToken,
+        axiosJWT
+      );
+
       if (response.success) {
         // Navigate to DetailCart component with the idDonHang in the URL
         navigate(`/getdetailcart/${idDonHang}`);
@@ -207,6 +214,27 @@ const ProfileCustomer = () => {
       }
     } catch (error) {
       setPasswordChangeMessage("Đã xảy ra lỗi khi đổi mật khẩu.");
+    }
+  };
+  const handleCancelOrder = async () => {
+    if (orderToCancel) {
+      try {
+        const response = await cancelOrder(
+          orderToCancel,
+          customer.accessToken,
+          axiosJWT
+        );
+        if (response.success) {
+          setCartData(
+            cartData.filter((order) => order.idDonHang !== orderToCancel)
+          );
+          setShowCancelModal(false);
+        } else {
+          console.error("Error cancelling order:", response.message);
+        }
+      } catch (error) {
+        console.error("Error cancelling order:", error);
+      }
     }
   };
 
@@ -416,47 +444,93 @@ const ProfileCustomer = () => {
         </Row>
         <div className="profile-orders mt-4">
           <h2>Đơn Hàng Của Bạn</h2>
-          <Table striped bordered hover>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Ngày mua hàng</th>
-                <th>Hình thức thanh toán</th>
-                <th>Tình trạng</th>
-                <th>Tổng tiền</th>
-                <th>Chi tiết đơn hàng</th>
-              </tr>
-            </thead>
-            <tbody>
-              {cartData.length > 0 ? (
-                cartData.map((order, index) => (
-                  <tr key={index}>
-                    <td>{order.idDonHang}</td>
-                    <td>{formatDate(order.ngayDatHang)}</td>
-                    <td>{order.phuongThucTT}</td>
-                    <td>{order.trangThai}</td>
-                    <td>{formatPrice(order.tongTienDH)}</td>
-                    <td>
-                    <Button 
-    variant="dark" 
-    className="detail-button" 
-    onClick={() => navigate(`/getdetailcart/${order.idDonHang}`)}
-  >
-    Xem chi tiết đơn hàng
-  </Button>
-                    </td>
-                  </tr>
-                ))
-              ) : (
+          <div className="table-responsive">
+            <Table striped bordered hover>
+              <thead>
                 <tr>
-                  <td colSpan="6">Bạn chưa có đơn hàng nào.</td>
+                  <th>ID</th>
+                  <th>Ngày mua hàng</th>
+                  <th>Hình thức thanh toán</th>
+                  <th>Tình trạng</th>
+                  <th>Tổng tiền</th>
+                  <th>Chi tiết đơn hàng</th>
+                  <th>Hủy đơn hàng</th>
                 </tr>
-              )}
-            </tbody>
-          </Table>
+              </thead>
+              <tbody>
+                {cartData.length > 0 ? (
+                  cartData.map((order, index) => (
+                    <tr key={index}>
+                      <td>{order.idDonHang}</td>
+                      <td>{formatDate(order.ngayDatHang)}</td>
+                      <td>{order.phuongThucTT}</td>
+                      <td>{order.trangThai}</td>
+                      <td>{formatPrice(order.tongTienDH)}</td>
+                      <td>
+                        <Button
+                          variant="dark"
+                          className="detail-button"
+                          onClick={() => navigate(`/getdetailcart/${order.idDonHang}`)}
+                        >
+                          Xem chi tiết đơn hàng
+                        </Button>
+                      </td>
+                      <td>
+                        {order.phuongThucTT === "COD" && order.trangThai === "waiting" && (
+                          <Button
+                            variant="danger"
+                            onClick={() => {
+                              setOrderToCancel(order.idDonHang);
+                              setShowCancelModal(true);
+                            }}
+                          >
+                            Hủy đơn hàng
+                          </Button>
+                        )}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="7">Bạn chưa có đơn hàng nào.</td>
+                  </tr>
+                )}
+              </tbody>
+            </Table>
+          </div>
         </div>
       </Container>
       <Footer />
+      <Modal
+        show={showCancelModal}
+        onHide={() => setShowCancelModal(false)}
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Hủy Đơn Hàng</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>Bạn có chắc chắn muốn hủy đơn hàng này không?</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="secondary"
+            onClick={() => setShowCancelModal(false)}
+          >
+            Hủy
+          </Button>
+          <Button
+            variant="danger"
+            onClick={() => {
+              handleCancelOrder();
+              setShowCancelModal(false);
+            }}
+          >
+            Xác nhận
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    
     </>
   );
 };

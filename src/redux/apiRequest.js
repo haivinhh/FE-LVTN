@@ -288,6 +288,38 @@ export const updateCustomerAddress = async (
     return { success: false, error: error.response?.data || error.message };
   }
 };
+export const cancelOrder = async (idDonHang, accessToken, axiosJWT) => {
+  try {
+    // Make the API request to cancel the order
+    const response = await axiosJWT.post(
+      "/api/cancelorder",
+      { idDonHang },
+      {
+        headers: { token: `Bearer ${accessToken}` },
+      }
+    );
+
+    // Check the response to determine the outcome
+    if (response.status === 200) {
+      return {
+        success: true,
+        message: response.data.message,
+      };
+    } else {
+      return {
+        success: false,
+        message: response.data.message || "Failed to cancel the order.",
+      };
+    }
+  } catch (err) {
+    console.error("Error canceling order:", err);
+    return {
+      success: false,
+      message: err.response?.data?.message || err.message,
+    };
+  }
+};
+
 export const payCOD = async (
   idDonHang,
   accessToken,
