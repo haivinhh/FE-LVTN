@@ -16,6 +16,7 @@ import { createOrUpdateCart } from "../redux/apiRequest";
 import { createAxios } from "../redux/createInstance";
 import { loginSuccess } from "../redux/authSlice";
 import { notification } from "antd"; // Import Ant Design notification component
+import { useNavigate } from "react-router-dom";
 
 
 const DetailProduct = () => {
@@ -24,6 +25,7 @@ const DetailProduct = () => {
   const [count, setCount] = useState(1);
   const customer = useSelector((state) => state.auth.login?.currentUser);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const loadProduct = async () => {
@@ -73,6 +75,7 @@ const DetailProduct = () => {
           message: 'Thành công',
           description: 'Sản phẩm đã được thêm vào giỏ hàng thành công!',
         });
+        navigate("/sanpham")
       } else {
         notification.error({
           message: 'Lỗi',
