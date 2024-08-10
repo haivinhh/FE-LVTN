@@ -384,7 +384,8 @@ export const checkOrderStatus = async (accessToken, app_trans_id, axiosJWT) => {
       // Failed to check order status
       return {
         success: false,
-        message: response.data.return_message || "Failed to check order status.",
+        message:
+          response.data.return_message || "Failed to check order status.",
       };
     }
   } catch (error) {
@@ -415,7 +416,7 @@ export const payOnline = async (
         idDonHang,
         tenNguoiNhan: recipientName,
         SDT: recipientPhone,
-        diaChi: recipientAddress
+        diaChi: recipientAddress,
       },
       {
         headers: { token: `Bearer ${accessToken}` },
@@ -427,22 +428,59 @@ export const payOnline = async (
       return {
         success: true,
         message: response.data.message,
-        orderUrl: response.data.order_url // Giả sử `orderUrl` được trả về từ API
+        orderUrl: response.data.order_url, // Giả sử `orderUrl` được trả về từ API
       };
-      
     } else {
       return {
         success: false,
-        message: response.data.message || "Failed to process online payment."
+        message: response.data.message || "Failed to process online payment.",
       };
     }
   } catch (error) {
     console.error("Error processing online payment:", error);
     return {
       success: false,
-      message: error.response?.data?.message || error.message
+      message: error.response?.data?.message || error.message,
     };
   }
 };
 
+export const processRefund = async (idDonHang, accessToken, axiosJWT) => {
+  try {
+    if (!axiosJWT) {
+      throw new Error("Axios instance is not defined");
+    }
 
+    const response = await axiosJWT.post(
+      "/api/processRefundAndCheckStatus", // Đường dẫn API của bạn
+      { idDonHang },
+      {
+        headers: { token: `Bearer ${accessToken}` },
+      }
+    );
+
+    if (response.status === 200) {
+      console.log("Kết quả hoàn tiền và kiểm tra trạng thái:", response.data);
+      return {
+        success: true,
+        message: response.data.message,
+        data: response.data, 
+      };
+    } else {
+      return {
+        success: false,
+        message:
+          response.data.message ||
+          "Không thể xử lý hoàn tiền và kiểm tra trạng thái.",
+      };
+    }
+  } catch (error) {
+    console.error("Lỗi khi xử lý hoàn tiền và kiểm tra trạng thái:", error);
+    return {
+      success: false,
+      message:
+        error.response?.data?.message ||
+        "Đã xảy ra lỗi khi xử lý hoàn tiền và kiểm tra trạng thái.",
+    };
+  }
+};

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-
+import { notification } from "antd";
 import {
   Container,
   Row,
@@ -10,7 +10,7 @@ import {
   Button,
   InputGroup,
   Table,
-  Modal
+  Modal,
 } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
@@ -25,6 +25,7 @@ import {
   updateUser,
   getDetailCartOfUser,
   cancelOrder,
+  processRefund,
 } from "../redux/apiRequest";
 import "../CSS/profilecus.css";
 import edit from "../Icon/edit.png";
@@ -218,22 +219,66 @@ const ProfileCustomer = () => {
   };
   const handleCancelOrder = async () => {
     if (orderToCancel) {
-      try {
-        const response = await cancelOrder(
-          orderToCancel,
-          customer.accessToken,
-          axiosJWT
-        );
-        if (response.success) {
-          setCartData(
-            cartData.filter((order) => order.idDonHang !== orderToCancel)
-          );
-          setShowCancelModal(false);
-        } else {
-          console.error("Error cancelling order:", response.message);
+      const order = cartData.find((order) => order.idDonHang === orderToCancel);
+      if (order) {
+        try {
+          let response;
+          if (order.phuongThucTT === "COD") {
+            response = await cancelOrder(
+              orderToCancel,
+              customer.accessToken,
+              axiosJWT
+            );
+            if (response.success) {
+              setCartData(
+                cartData.filter((order) => order.idDonHang !== orderToCancel)
+              );
+              setShowCancelModal(false);
+              notification.success({
+                message: "Hủy đơn hàng thành công",
+                description: "Đơn hàng của bạn đã được hủy thành công.",
+              });
+            } else {
+              console.error("Error cancelling order:", response.message);
+              notification.error({
+                message: "Lỗi khi hủy đơn hàng",
+                description:
+                  response.message || "Có lỗi xảy ra khi hủy đơn hàng.",
+              });
+            }
+          } else if (order.phuongThucTT === "ONL") {
+            response = await processRefund(
+              orderToCancel,
+              customer.accessToken,
+              axiosJWT
+            );
+            if (response.success) {
+              setCartData(
+                cartData.filter((order) => order.idDonHang !== orderToCancel)
+              );
+              setShowCancelModal(false);
+              notification.success({
+                message: "Hủy đơn hàng thành công",
+                description:
+                  "Hủy đơn hàng thành công, đơn hàng của bạn đã được hoàn tiền, vui lòng kiểm tra lại số dư tài khoản.",
+              });
+            } else {
+              console.error("Error processing refund:", response.message);
+              notification.error({
+                message: "Lỗi khi hoàn tiền",
+                description:
+                  response.message ||
+                  "Có lỗi xảy ra khi hoàn tiền cho đơn hàng.",
+              });
+            }
+          }
+        } catch (error) {
+          console.error("Error handling cancel order:", error);
+          notification.error({
+            message: "Lỗi khi xử lý đơn hàng",
+            description: "Có lỗi xảy ra khi xử lý yêu cầu hủy đơn hàng.",
+          });
         }
-      } catch (error) {
-        console.error("Error cancelling order:", error);
       }
     }
   };
@@ -470,13 +515,15 @@ const ProfileCustomer = () => {
                         <Button
                           variant="dark"
                           className="detail-button"
-                          onClick={() => navigate(`/getdetailcart/${order.idDonHang}`)}
+                          onClick={() =>
+                            navigate(`/getdetailcart/${order.idDonHang}`)
+                          }
                         >
                           Xem chi tiết đơn hàng
                         </Button>
                       </td>
                       <td>
-                        {order.phuongThucTT === "COD" && order.trangThai === "waiting" && (
+                        {order.trangThai === "waiting" && (
                           <Button
                             variant="danger"
                             onClick={() => {
@@ -513,10 +560,7 @@ const ProfileCustomer = () => {
           <p>Bạn có chắc chắn muốn hủy đơn hàng này không?</p>
         </Modal.Body>
         <Modal.Footer>
-          <Button
-            variant="secondary"
-            onClick={() => setShowCancelModal(false)}
-          >
+          <Button variant="secondary" onClick={() => setShowCancelModal(false)}>
             Hủy
           </Button>
           <Button
@@ -530,7 +574,6 @@ const ProfileCustomer = () => {
           </Button>
         </Modal.Footer>
       </Modal>
-    
     </>
   );
 };
