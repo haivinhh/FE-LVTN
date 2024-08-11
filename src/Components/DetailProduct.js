@@ -115,7 +115,7 @@ const DetailProduct = () => {
           </Col>
           <Col md={9} style={{ width: "50rem", margin: "50px" }}>
             <Card.Title>{product.tenSanPham}</Card.Title>
-            <Card.Text>{product.moTa}</Card.Text>
+            <Card.Text>{product.thongTinSP}</Card.Text>
             <ListGroup variant="flush">
               <Card.Text>
                 <b style={{ color: "red" }}>{formatPrice(product.donGia)}</b>

@@ -76,7 +76,13 @@ const Cart = () => {
       currency: "VND",
     });
   };
-
+  const formatPromotion = (promotion) => {
+    if (promotion === undefined || promotion === null || isNaN(promotion)) {
+      return "0%";
+    }
+    // Chuyển đổi số thập phân thành phần trăm và định dạng thành chuỗi
+    return `${(promotion * 100).toFixed(0)}%`;
+  };
   const handleDeleteCartItem = (idChiTietDH) => {
     setIdToDelete(idChiTietDH);
     setShowConfirmModal(true);
@@ -371,9 +377,13 @@ const Cart = () => {
             </div>
           </div>
           <div className="cart-total">
+          <Title level={5} >
+              Giảm giá: <span style={{color: "red"}}>{formatPromotion(cartData?.[0]?.khuyenMai)}</span>
+            </Title>
             <Title level={4}>
               Tổng tiền đơn hàng: {formatPrice(cartData?.[0]?.tongTienDH)}
             </Title>
+            
             <div className="payment-method">
               <Title level={4}>Phương thức thanh toán</Title>
               <Radio.Group
