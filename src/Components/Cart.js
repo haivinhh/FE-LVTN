@@ -125,7 +125,7 @@ const Cart = () => {
 
   const handleQuantityChange = async (idChiTietDH, newQuantity) => {
     const axiosJWT = createAxios(customer, dispatch, loginSuccess);
-
+  
     // Validate quantity
     if (newQuantity < 1) {
       notification.error({
@@ -134,7 +134,7 @@ const Cart = () => {
       });
       return;
     }
-
+  
     try {
       const result = await updateCartItem(
         idChiTietDH,
@@ -146,13 +146,16 @@ const Cart = () => {
         notification.success({
           message: "Cập nhật số lượng thành công",
         });
+  
+        // Call getDetailCart twice with a 1-second delay between calls
         await getDetailCart(customer.accessToken, dispatch, axiosJWT);
+        setTimeout(async () => {
+          await getDetailCart(customer.accessToken, dispatch, axiosJWT);
+        }, 20); // 1000 milliseconds = 1 second
       } else {
         notification.error({
           message: "Cập nhật số lượng thất bại",
-          description: `Lỗi: ${
-            result.message || "Số lượng trong kho không đủ"
-          }`,
+          description: `Lỗi: ${result.message || "Số lượng trong kho không đủ"}`,
         });
       }
     } catch (error) {
@@ -164,6 +167,7 @@ const Cart = () => {
       });
     }
   };
+  
 
   const handlePayment = async () => {
     if (!idDonHang) {
