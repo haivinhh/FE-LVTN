@@ -23,11 +23,15 @@ const ForgotPassword = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    
+    // Show notification about waiting
+    openNotification('info', 'Vui lòng đợi', `Chúng tôi đang gửi đường link đặt lại mật khẩu qua email của bạn: ${email}`);
+
     try {
       const response = await http.post("/api/forgot-password", { email, username });
       if (response.status === 200) {
         openNotification('success', 'Thành công', 'Đã gửi email xác nhận! Vui lòng kiểm tra hộp thư của bạn.');
-        setTimeout(() => navigate("/reset-password", { state: { username } }), 2000); // Pass username via state
+         // Pass username via state
       } else {
         openNotification('error', 'Lỗi', response.data.message || "Đã xảy ra lỗi. Vui lòng thử lại sau.");
       }
