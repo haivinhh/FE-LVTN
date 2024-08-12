@@ -257,6 +257,7 @@ const Cart = () => {
       });
     }
   };
+  
 
   const columns = [
     {
@@ -343,6 +344,8 @@ const Cart = () => {
     <>
       <Header />
       <div className="cart-container">
+      {cartData && cartData.length > 0 ? (
+          <> 
         <Title level={2}>Giỏ hàng của bạn</Title>
         <div className="cart-table-container">
           <Table
@@ -384,6 +387,7 @@ const Cart = () => {
           <Title level={5} >
               Giảm giá: <span style={{color: "red"}}>{formatPromotion(cartData?.[0]?.khuyenMai)}</span>
             </Title>
+            <Title level={4}>Đơn hàng của bạn được miễn phí vận chuyển</Title>
             <Title level={4}>
               Tổng tiền đơn hàng: {formatPrice(cartData?.[0]?.tongTienDH)}
             </Title>
@@ -395,7 +399,7 @@ const Cart = () => {
                 onChange={(e) => setPaymentMethod(e.target.value)}
               >
                 <Radio value="COD">Thanh toán khi nhận hàng</Radio>
-                <Radio value="Online">Thanh toán online</Radio>
+                <Radio value="Online">Thanh toán online Zalopay</Radio>
               </Radio.Group>
             </div>
             <Button
@@ -415,9 +419,16 @@ const Cart = () => {
         >
           <p>Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng?</p>
         </Modal>
+        </>
+        ) : (
+          <div className="empty-cart-message">
+            <Title level={3}>Bạn chưa thêm sản phẩm vào giỏ hàng</Title>
+          </div>
+          )}
       </div>
       <Footer />
     </>
+        
   );
 };
 

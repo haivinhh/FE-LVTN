@@ -70,4 +70,5 @@ input.ant-input {
   display: flex;
   flex-direction: row; /* Align radio buttons horizontally */
   gap: 10px; /* Optional: Add some space between radio buttons */
+  margin-left: 300px;
 }

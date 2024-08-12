@@ -282,6 +282,33 @@ const ProfileCustomer = () => {
       }
     }
   };
+  const getStatusText = (status) => {
+    switch (status) {
+      case "unpaid":
+        return "Chưa đặt hàng"
+      case "waiting":
+        return "Chờ xác nhận";
+      case "delivery":
+        return "Đang giao";
+      case "success":
+        return "Giao hàng thành công";
+      default:
+        return "Không xác định";
+    }
+  };
+
+  const getStatusStyle = (status) => {
+    switch (status) {
+      case "waiting":
+        return { color: "orange" };
+      case "delivery":
+        return { color: "blue" };
+      case "success":
+        return { color: "green" };
+      default:
+        return {};
+    }
+  };
 
   return (
     <>
@@ -509,7 +536,9 @@ const ProfileCustomer = () => {
                       <td>{order.idDonHang}</td>
                       <td>{formatDate(order.ngayDatHang)}</td>
                       <td>{order.phuongThucTT}</td>
-                      <td>{order.trangThai}</td>
+                      <td style={getStatusStyle(order.trangThai)}>
+                        {getStatusText(order.trangThai)}
+                      </td>
                       <td>{formatPrice(order.tongTienDH)}</td>
                       <td>
                         <Button
