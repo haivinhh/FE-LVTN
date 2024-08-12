@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Table, Button, notification, Typography } from "antd";
-import { CheckOutlined, EyeOutlined, ArrowLeftOutlined } from "@ant-design/icons";
+import { CheckOutlined, EyeOutlined, ArrowLeftOutlined,CloseOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { loginAdminSuccess } from "../../../redux/authSliceAdmin";
 import { createAxiosAdmin } from "../../../redux/createInstance";
@@ -70,6 +70,45 @@ const OrderDeliveryManager = () => {
     setViewingDetails(false);
     setSelectedOrder(null);
   };
+  const handleFailDelivery = async (idDonHang) => {
+    try {
+      const response = await axiosAdmin.get(`/api/detailcart/${idDonHang}`);
+      const { phuongThucTT } = response.data;
+
+      if (phuongThucTT === 'COD') {
+        const codResult = await axiosAdmin.post(
+          '/api/deliveryfailcod',
+          { idDonHang },
+          {
+            headers: {
+              token: `Bearer ${user?.accessToken}`,
+            },
+          }
+        );
+        console.log("COD Response:", codResult.data);
+        notification.success({
+          message: "Xử lý giao hàng không thành công (COD) thành công, Đã nhập hàng lại vào kho.",
+        });
+        console.log("iddhcod", idDonHang);
+      } else {
+        notification.warning({
+          message: "Warning",
+          description: "Phương thức thanh toán không hợp lệ hoặc không hỗ trợ xử lý thất bại.",
+        });
+      }
+
+      fetchOrders(); // Refresh the order list
+    } catch (error) {
+      console.error("Error handling delivery failure:", error.message);
+      notification.error({
+        message: "Error",
+        description: "Failed to handle delivery failure.",
+      });
+    }
+  };
+
+  
+
 
   const columns = [
     {
@@ -137,13 +176,32 @@ const OrderDeliveryManager = () => {
       title: "Xác Nhận Đơn Hàng",
       key: "action",
       render: (_, record) => (
+        
         <Button
           icon={<CheckOutlined />}
           onClick={() => handleConfirmDelivery(record.idDonHang)}
           type="primary"
         >
           Giao hàng thành công
-        </Button>
+        </Button> 
+      ),
+      align: "center",
+    },
+    {
+      title: "Xác Nhận Đơn Hàng",
+      key: "failAction",
+      render: (_, record) => (
+        record.phuongThucTT === 'COD' ? (
+          <Button
+            icon={<CloseOutlined />}
+            onClick={() => handleFailDelivery(record.idDonHang)}
+            type="primary"
+            danger
+            style={{ marginLeft: '8px' }}
+          >
+            Giao hàng không thành công
+          </Button>
+        ) : null
       ),
       align: "center",
     },

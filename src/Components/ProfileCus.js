@@ -292,6 +292,8 @@ const ProfileCustomer = () => {
         return "Đang giao";
       case "success":
         return "Giao hàng thành công";
+      case "unreceive":
+        return 'Giao hàng không thành công (khách hàng không nhận hàng)'
       default:
         return "Không xác định";
     }
@@ -305,6 +307,8 @@ const ProfileCustomer = () => {
         return { color: "blue" };
       case "success":
         return { color: "green" };
+      case "unreceive":
+        return { color: "red"};
       default:
         return {};
     }
