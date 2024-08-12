@@ -6,11 +6,11 @@ import Col from "react-bootstrap/Col";
 import Card from "react-bootstrap/Card";
 import Container from "react-bootstrap/Container";
 import Pagination from "react-bootstrap/Pagination";
-import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/Button';
+import Button from "react-bootstrap/Button";
 import http from "../HTTP/http";
-import { useLocation } from 'react-router-dom';
+import { useLocation } from "react-router-dom";
 import { Link } from "react-router-dom";
+import Select from "react-select";
 import "../CSS/filter.css";
 import "../CSS/checkbox.css";
 
@@ -31,7 +31,7 @@ const Products = () => {
   const [noProducts, setNoProducts] = useState(false);
 
   const searchParams = new URLSearchParams(location.search);
-  const searchTerm = searchParams.get('search');
+  const searchTerm = searchParams.get("search");
 
   useEffect(() => {
     document.title = "MCase";
@@ -43,18 +43,37 @@ const Products = () => {
     } else {
       loadProducts();
     }
-  }, [localStorage.getItem("searchTerm"), localStorage.getItem("selectedCategoryId"), page]);
+  }, [
+    localStorage.getItem("searchTerm"),
+    localStorage.getItem("selectedCategoryId"),
+    page,
+  ]);
 
   const fetchData = async () => {
     try {
       const brandsResponse = await http.get("/api/dongdt");
-      setBrands(brandsResponse.data);
+      setBrands(
+        brandsResponse.data.map((item) => ({
+          value: item.idDongDT,
+          label: item.tenDongDT,
+        }))
+      );
 
       const phoneTypesResponse = await http.get("/api/loaidt");
-      setPhoneTypes(phoneTypesResponse.data);
+      setPhoneTypes(
+        phoneTypesResponse.data.map((item) => ({
+          value: item.idLoaiDT,
+          label: item.tenLoaiDienThoai,
+        }))
+      );
 
       const productLinesResponse = await http.get("/api/danhmucsp");
-      setProductLines(productLinesResponse.data);
+      setProductLines(
+        productLinesResponse.data.map((item) => ({
+          value: item.idDanhMuc,
+          label: item.tenDanhMuc,
+        }))
+      );
 
       // Reset filters here
       setFilters({
@@ -72,7 +91,8 @@ const Products = () => {
   };
 
   const loadProducts = () => {
-    http.get(`/api/sanpham`)
+    http
+      .get(`/api/sanpham`)
       .then((response) => {
         console.log("Products data:", response.data);
         const totalPages = Math.ceil(response.data.length / value);
@@ -94,7 +114,8 @@ const Products = () => {
 
   const loadProductsFromCate = () => {
     const selectedCategoryId = localStorage.getItem("selectedCategoryId");
-    http.get(`/api/sanpham/danhmuc/${selectedCategoryId}`)
+    http
+      .get(`/api/sanpham/danhmuc/${selectedCategoryId}`)
       .then((response) => {
         setProducts(response.data);
         setTotalPages(Math.ceil(response.data.length / value));
@@ -108,28 +129,23 @@ const Products = () => {
         });
       })
       .catch((error) => {
-        console.error("There was an error fetching the products from the category!", error);
+        console.error(
+          "There was an error fetching the products from the category!",
+          error
+        );
       });
   };
 
-  const handleFilterChange = (filterType, id) => {
-    const newFilters = { ...filters };
-    if (newFilters[filterType].includes(id)) {
-      newFilters[filterType] = newFilters[filterType].filter(
-        (filterId) => filterId !== id
-      );
-    } else {
-      newFilters[filterType].push(id);
-    }
-    setFilters(newFilters);
-
-    // Log the ID of the checkbox
-    console.log(`Checkbox ID (${filterType}):`, id);
+  const handleFilterChange = (filterType, selectedOptions) => {
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      [filterType]: selectedOptions.map((option) => option.value),
+    }));
   };
 
   const handleApplyFilters = () => {
-    localStorage.removeItem('searchTerm');
-    localStorage.removeItem('selectedCategoryId');
+    localStorage.removeItem("searchTerm");
+    localStorage.removeItem("selectedCategoryId");
     fetchFilteredProducts();
   };
 
@@ -137,25 +153,26 @@ const Products = () => {
     const { brand, type, line } = filters;
 
     // Constructing query parameters manually
-    let params = '';
+    let params = "";
 
     if (brand.length) {
-      params += `idDongDT=${brand.join(',')}&`;
+      params += `idDongDT=${brand.join(",")}&`;
     }
     if (type.length) {
-      params += `idLoaiDT=${type.join(',')}&`;
+      params += `idLoaiDT=${type.join(",")}&`;
     }
     if (line.length) {
-      params += `idDanhMuc=${line.join(',')}`;
+      params += `idDanhMuc=${line.join(",")}`;
     }
 
     // Removing the trailing '&' if present
-    if (params.endsWith('&')) {
+    if (params.endsWith("&")) {
       params = params.slice(0, -1);
     }
 
     // Sending GET request using axios
-    http.get(`/api/sanpham/filter?${params}`)
+    http
+      .get(`/api/sanpham/filter?${params}`)
       .then((response) => {
         if (response.data === false) {
           setNoProducts(true);
@@ -168,12 +185,16 @@ const Products = () => {
         }
       })
       .catch((error) => {
-        console.error("There was an error fetching the filtered products!", error);
+        console.error(
+          "There was an error fetching the filtered products!",
+          error
+        );
       });
   };
 
   const searchProducts = (term) => {
-    http.get(`/api/sanpham/search/${encodeURIComponent(term)}`)
+    http
+      .get(`/api/sanpham/search/${encodeURIComponent(term)}`)
       .then((response) => {
         setProducts(response.data);
         setTotalPages(Math.ceil(response.data.length / value));
@@ -195,34 +216,59 @@ const Products = () => {
   const currentProducts = products.slice(startIndex, startIndex + value);
 
   const formatPrice = (price) => {
-    return price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+    return price.toLocaleString("vi-VN", {
+      style: "currency",
+      currency: "VND",
+    });
   };
 
-  const listProducts = currentProducts.length > 0 ? (
-    currentProducts.map((product) => (
-      <Col md={4} key={product.idSanPham} className="d-flex">
-        <Card style={{ width: "18rem", marginTop: "50px" }} className="flex-fill">
-          <Link to={`/sanpham/detail/${product.idSanPham}`} className="text-dark no-underline">
-            <Card.Img variant="top" src={product.hinhSP} className="product-image mb-3" />
-            <Card.Body className="d-flex flex-column">
-              <Card.Title style={{ textDecoration: "none" }}>{product.tenSanPham}</Card.Title>
-              <Card.Text style={{ color: "red", textDecoration: "none" }}>{formatPrice(product.donGia)}</Card.Text>
-            </Card.Body>
-          </Link>
-        </Card>
+  const listProducts =
+    currentProducts.length > 0 ? (
+      currentProducts.map((product) => (
+        <Col md={4} key={product.idSanPham} className="d-flex">
+          <Card
+            style={{ width: "18rem", marginTop: "50px" }}
+            className="flex-fill"
+          >
+            <Link
+              to={`/sanpham/detail/${product.idSanPham}`}
+              className="text-dark no-underline"
+            >
+              <Card.Img
+                variant="top"
+                src={product.hinhSP}
+                className="product-image mb-3"
+              />
+              <Card.Body className="d-flex flex-column">
+                <Card.Title style={{ textDecoration: "none" }}>
+                  {product.tenSanPham}
+                </Card.Title>
+                <Card.Text style={{ color: "red", textDecoration: "none" }}>
+                  {formatPrice(product.donGia)}
+                </Card.Text>
+              </Card.Body>
+            </Link>
+          </Card>
+        </Col>
+      ))
+    ) : (
+      <Col>
+        <p>
+          Không tìm thấy sản phẩm nào với từ khóa "
+          {localStorage.getItem("searchTerm")}".
+        </p>
       </Col>
-    ))
-  ) : (
-    <Col>
-      <p>Không tìm thấy sản phẩm nào với từ khóa "{localStorage.getItem("searchTerm")}".</p>
-    </Col>
-  );
+    );
 
   let listPage = [];
   for (let index = 0; index < totalPages; index++) {
     const value2 = index + 1;
     listPage.push(
-      <Pagination.Item key={value2} active={value2 === page} onClick={clickPage}>
+      <Pagination.Item
+        key={value2}
+        active={value2 === page}
+        onClick={clickPage}
+      >
         {value2}
       </Pagination.Item>
     );
@@ -233,66 +279,79 @@ const Products = () => {
       <Header />
       <Container fluid>
         <Row>
-          <Col xs={12} lg={2} className="filter-container">
+          <Col
+            xs={12}
+            lg={2}
+            className="filter-container"
+            style={{ marginTop: "50px" }}
+          >
             <div className="filter-section">
               <h5>LOẠI ĐIỆN THOẠI</h5>
-              {phoneTypes.map((type) => (
-                <Form.Check 
-                  key={type.idLoaiDT} 
-                  type="checkbox"
-                  id={`type-${type.idLoaiDT}`}
-                  label={type.tenLoaiDienThoai}
-                  checked={filters.type.includes(type.idLoaiDT)}
-                  className="custom-checkbox"
-                  onChange={() => handleFilterChange('type', type.idLoaiDT)}
-                />
-              ))}
+              <Select
+                isMulti
+                options={phoneTypes}
+                value={phoneTypes.filter((option) =>
+                  filters.type.includes(option.value)
+                )}
+                onChange={(selectedOptions) =>
+                  handleFilterChange("type", selectedOptions)
+                }
+                className="basic-multi-select"
+                classNamePrefix="select"
+                placeholder="Chọn loại điện thoại"
+              />
             </div>
             <div className="filter-section">
               <h5>DÒNG ĐIỆN THOẠI</h5>
-              {brands.map((brand) => (
-                <Form.Check 
-                  key={brand.idDongDT} 
-                  type="checkbox"
-                  id={`brand-${brand.idDongDT}`}
-                  label={brand.tenDongDT}
-                  checked={filters.brand.includes(brand.idDongDT)}
-                  className="custom-checkbox"
-                  onChange={() => handleFilterChange('brand', brand.idDongDT)}
-                />
-              ))}
+              <Select
+                isMulti
+                options={brands}
+                value={brands.filter((option) =>
+                  filters.brand.includes(option.value)
+                )}
+                onChange={(selectedOptions) =>
+                  handleFilterChange("brand", selectedOptions)
+                }
+                className="basic-multi-select"
+                classNamePrefix="select"
+                placeholder="Chọn dòng điện thoại"
+              />
             </div>
             <div className="filter-section">
-              <h5>LOẠI SẢN PHẨM</h5>
-              {productLines.map((line) => (
-                <Form.Check 
-                  key={line.idDanhMuc} 
-                  type="checkbox"
-                  id={`line-${line.idDanhMuc}`}
-                  label={line.tenDanhMuc}
-                  checked={filters.line.includes(line.idDanhMuc)}
-                  className="custom-checkbox"
-                  onChange={() => handleFilterChange('line', line.idDanhMuc)}
-                />
-              ))}
+              <h5>DANH MỤC SẢN PHẨM</h5>
+              <Select
+                isMulti
+                options={productLines}
+                value={productLines.filter((option) =>
+                  filters.line.includes(option.value)
+                )}
+                onChange={(selectedOptions) =>
+                  handleFilterChange("line", selectedOptions)
+                }
+                className="basic-multi-select"
+                classNamePrefix="select"
+                placeholder="Chọn danh mục sản phẩm"
+              />
             </div>
-            <Button variant="dark" onClick={handleApplyFilters} className="mt-3">Áp dụng</Button>
+            <Button
+              variant="dark"
+              className="apply-filters-btn"
+              onClick={handleApplyFilters}
+            >
+              Áp dụng
+            </Button>
           </Col>
-          <Col xs={12} lg={9}>
-            <Row style={{ marginTop: "20px" }}>
+          <Col xs={12} lg={10}>
+            <Row>
               {noProducts ? (
                 <Col>
-                  <p>Không có kết quả phù hợp với bộ lọc.</p>
+                  <p>Không có sản phẩm nào để hiển thị.</p>
                 </Col>
               ) : (
                 listProducts
               )}
             </Row>
-            <Row>
-              <Col className="d-flex justify-content-center py-3">
-                <Pagination>{listPage}</Pagination>
-              </Col>
-            </Row>
+            <Pagination className="pagination-container">{listPage}</Pagination>
           </Col>
         </Row>
       </Container>

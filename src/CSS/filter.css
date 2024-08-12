@@ -1,29 +1,17 @@
-.filter-container {
-  padding: 65px;
-  background-color: #ffffff; /* Set background to white */
-  height: 100%;
-  max-width: 200px; /* Narrow the filter section */
-}
-
 .filter-section {
-  margin-bottom: 20px;
+  margin-bottom: 1rem;
 }
 
-.filter-section h5 {
-  font-size: 16px;
-  font-weight: bold;
-  margin-bottom: 10px;
+.apply-filters-btn {
+  margin-top: 1rem;
+  width: 100%;
 }
 
-.filter-section .form-check {
-  margin-bottom: 10px;
+.basic-multi-select {
+  margin-bottom: 1rem;
 }
-
-.filter-section .form-check{
-  text-align: left; /* Ensure text alignment is left */
-  
-}
-
-.filter-section h5 {
-  text-align: left;
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
 }
