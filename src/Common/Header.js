@@ -85,7 +85,7 @@ const Header = ({ onSearch }) => {
       align="end"
     >
       <NavDropdown.Item onClick={handleLogoutClick}>Đăng xuất</NavDropdown.Item>
-      <NavDropdown.Item onClick={handleProfileClick}>Thông tin cá nhân</NavDropdown.Item>
+      <NavDropdown.Item onClick={handleProfileClick}>Thông tin cá nhân và <br/>quản lý đơn hàng</NavDropdown.Item>
     </NavDropdown>
   );
 

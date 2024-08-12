@@ -351,7 +351,7 @@ const Products = () => {
                 listProducts
               )}
             </Row>
-            <Pagination className="pagination-container">{listPage}</Pagination>
+            <Pagination  className="pagination-container" >{listPage}</Pagination>
           </Col>
         </Row>
       </Container>

@@ -3,7 +3,6 @@ import Footer from "../Common/Footer";
 import Header from "../Common/Header";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import Container from "react-bootstrap/esm/Container";
 import Carousel from "react-bootstrap/Carousel";
@@ -26,7 +25,11 @@ const Home = () => {
       .get(`/api/sanpham`)
       .then((response) => {
         console.log(response);
-        setProducts(response.data);
+        // Filter products with odd idSanPham
+        const filteredProducts = response.data.filter(
+          (product) => product.idSanPham % 2 !== 0
+        );
+        setProducts(filteredProducts);
       })
       .catch((error) => {
         console.error("There was an error fetching the products!", error);
@@ -70,7 +73,7 @@ const Home = () => {
                   className="text-dark no-underline"
                 >
                   {" "}
-                  {/* Link to DetailProduct */}
+                
                   <Card.Img
                     variant="top"
                     src={product.hinhSP}

@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import { Form, Button, Container, Alert } from "react-bootstrap";
+import { Form, Button, Container } from "react-bootstrap";
 import Header from "../Common/Header";
 import Footer from "../Common/Footer";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { registerCus } from "../redux/apiRequest";
-import { registerFailed } from "../redux/authSlice"; // Import registerFailed action
+import { notification } from "antd"; // Import Ant Design notification component
 
 const Register = () => {
   const [username, setUsername] = useState("");
@@ -14,10 +14,8 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
-
   const [email, setEmail] = useState("");
   const [validationError, setValidationError] = useState("");
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const registerError = useSelector((state) => state.auth.error); // Get error from Redux store
@@ -70,14 +68,22 @@ const Register = () => {
       setEmail("");
 
       // Show success message
-      setShowSuccessMessage(true);
+      notification.success({
+        message: "Đăng ký thành công",
+        description: "Bạn đã đăng ký thành công! Đăng nhập để tiếp tục.",
+        duration: 1.5,
+      });
+
       setTimeout(() => {
-        setShowSuccessMessage(false);
         navigate("/login");
-      }, 2000);
+      }, 1500); // Delay navigation to match notification duration
     } else {
-      // Handle the error
-      setValidationError(result.message);
+      // Show error message
+      notification.error({
+        message: "Đăng ký thất bại",
+        description: result.message || "Có lỗi xảy ra trong quá trình đăng ký.",
+        duration: 1.5,
+      });
     }
   };
 
@@ -87,24 +93,12 @@ const Register = () => {
       <Container className="login-container mt-5">
         <h2 className="text-center">ĐĂNG KÝ</h2>
 
-        {showSuccessMessage && (
-          <Alert
-            variant="success"
-            onClose={() => setShowSuccessMessage(false)}
-            dismissible
-          >
-            Đăng ký thành công! Đăng nhập để tiếp tục.
-          </Alert>
-        )}
-
         {validationError && (
-          <Alert
-            variant="danger"
-            onClose={() => setValidationError("")}
-            dismissible
-          >
-            {validationError}
-          </Alert>
+          <notification.error
+            message="Lỗi"
+            description={validationError}
+            duration={1.5}
+          />
         )}
 
         <Form onSubmit={handleSubmit}>

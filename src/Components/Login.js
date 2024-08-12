@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Form, Button, Container, InputGroup, Alert } from "react-bootstrap";
+import { Form, Button, Container, InputGroup } from "react-bootstrap";
 import Header from "../Common/Header";
 import Footer from "../Common/Footer";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -8,18 +8,16 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import "../CSS/login.css"; // Nếu có CSS riêng cho Login, bạn vẫn có thể giữ
 
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { loginUser } from "../redux/apiRequest";
+import { notification } from "antd"; // Import Ant Design notification component
 
 const Login = () => {
   const [userName, setUserName] = useState("");
   const [passWord, setPassWord] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-  const [showErrorMessage, setShowErrorMessage] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -30,22 +28,28 @@ const Login = () => {
     const result = await loginUser(customer, dispatch, navigate);
     
     if (result.status === "success") {
-      
-      setShowSuccessMessage(true);
-      setShowErrorMessage(false);
-      
+      notification.success({
+        message: "Đăng nhập thành công",
+        description: "Bạn đã đăng nhập thành công!",
+        duration: 1.5,
+      });
+
       setTimeout(() => {
-        setShowSuccessMessage(false);
         navigate("/");
       }, 1000);
     } else {
-      setShowErrorMessage(true);
+      notification.error({
+        message: "Lỗi đăng nhập",
+        description: "Sai tên đăng nhập hoặc mật khẩu.",
+        duration: 1.5,
+      });
     }
   };
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
+
   const handleForgotPasswordNavigation = () => {
     navigate("/forgot-password"); // Điều hướng đến trang quên mật khẩu
   };
@@ -59,21 +63,11 @@ const Login = () => {
       <Header />
       <Container className="login-container mt-5">
         <h2 className="text-center">ĐĂNG NHẬP</h2>
-        {showSuccessMessage && (
-          <Alert variant="success" onClose={() => setShowSuccessMessage(false)} dismissible>
-            Đăng nhập thành công!.
-          </Alert>
-        )}
-        {showErrorMessage && (
-          <Alert variant="danger" onClose={() => setShowErrorMessage(false)} dismissible>
-            Sai tên đăng nhập hoặc mật khẩu.
-          </Alert>
-        )}
         <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-3" controlId="userName">
             <Form.Control
               type="text"
-              placeholder="username"
+              placeholder="Tên đăng nhập"
               value={userName}
               onChange={(e) => setUserName(e.target.value)}
               required
@@ -83,7 +77,7 @@ const Login = () => {
             <InputGroup>
               <Form.Control
                 type={showPassword ? "text" : "password"}
-                placeholder="password"
+                placeholder="Mật khẩu"
                 value={passWord}
                 onChange={(e) => setPassWord(e.target.value)}
                 required
@@ -104,9 +98,11 @@ const Login = () => {
               </span>
             </InputGroup>
             <div className="text-muted mt-2">
-            <a onClick={handleForgotPasswordNavigation} style={{ cursor: "pointer", color: "blue" }}>
+              <a onClick={handleForgotPasswordNavigation} style={{ cursor: "pointer", color: "blue" }}>
                 Quên mật khẩu
-              </a> <br /> <a>Khách hàng mới? </a>
+              </a>
+              <br />
+              <a>Khách hàng mới? </a>
               <a onClick={handleRegisterNavigation} style={{ cursor: "pointer", color: "blue" }}>
                 Tạo tài khoản
               </a>

@@ -18,7 +18,6 @@ import { loginSuccess } from "../redux/authSlice";
 import { notification } from "antd"; // Import Ant Design notification component
 import { useNavigate } from "react-router-dom";
 
-
 const DetailProduct = () => {
   const { idSanPham } = useParams();
   const [product, setProduct] = useState({});
@@ -41,25 +40,21 @@ const DetailProduct = () => {
   }, [idSanPham]);
 
   const formatPrice = (price) => {
-    if (price) {
-      return price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
-    } else {
-      return ''; // or any default value you prefer
-    }
+    return price
+      ? price.toLocaleString("vi-VN", { style: "currency", currency: "VND" })
+      : "";
   };
 
   const decreaseCount = () => {
-    if (count > 1) {
-      setCount(count - 1);
-    }
+    setCount((prevCount) => (prevCount > 1 ? prevCount - 1 : 1));
   };
 
   const increaseCount = () => {
-    setCount(count + 1);
+    setCount((prevCount) => prevCount + 1);
   };
 
   const changeCount = (e) => {
-    const value = parseInt(e.target.value);
+    const value = parseInt(e.target.value, 10);
     if (!isNaN(value) && value > 0) {
       setCount(value);
     }
@@ -68,25 +63,30 @@ const DetailProduct = () => {
   const handleAddToCart = async () => {
     try {
       const axiosJWT = createAxios(customer, dispatch, loginSuccess);
-      const result = await createOrUpdateCart(idSanPham, count, customer.accessToken, axiosJWT);
+      const result = await createOrUpdateCart(
+        idSanPham,
+        count,
+        customer.accessToken,
+        axiosJWT
+      );
 
       if (result.success) {
         notification.success({
-          message: 'Thành công',
-          description: 'Sản phẩm đã được thêm vào giỏ hàng thành công!',
+          message: "Thành công",
+          description: "Sản phẩm đã được thêm vào giỏ hàng thành công!",
         });
-        navigate("/sanpham")
+        navigate("/sanpham");
       } else {
         notification.error({
-          message: 'Lỗi',
+          message: "Lỗi",
           description: `Không thể thêm vào giỏ hàng: ${result.error}`,
         });
       }
     } catch (error) {
       console.error("Error adding to cart:", error);
       notification.error({
-        message: 'Lỗi',
-        description: 'Không thể thêm vào giỏ hàng. Vui lòng thử lại sau.',
+        message: "Lỗi",
+        description: "Không thể thêm vào giỏ hàng. Vui lòng đăng nhập",
       });
     }
   };
@@ -95,82 +95,78 @@ const DetailProduct = () => {
     <>
       <Header />
       <Container
-        style={{
-          marginTop: "200px",
-          marginBottom: "100px",
-          borderRadius: "25px",
-          border: "2px solid #cccccc",
-          padding: "20px",
-          boxShadow: "5px 10px #888888",
-        }}
+        className="py-4 my-4 shadow rounded border"
+        style={{ maxWidth: "1200px" }}
       >
-        <h1 style={{ marginLeft: "250px" }}>CHI TIẾT SẢN PHẨM</h1>
+        <h1 className="text-center mb-4" style={{ marginLeft: "400px" }}>
+          Chi Tiết Sản Phẩm
+        </h1>
         <Row>
-          <Col md={3}>
+          <Col
+            md={4}
+            className="d-flex justify-content-center align-items-center"
+          >
             <Card.Img
-              style={{ borderRadius: "10% 10% 10% 10% / 11% 10% 10% 10% ", marginLeft: "50px" }}
-              variant="top"
+              className="img-fluid rounded"
               src={product.hinhSP}
+              alt={product.tenSanPham}
+              style={{ maxHeight: "400px", objectFit: "cover" }}
             />
           </Col>
-          <Col md={9} style={{ width: "50rem", margin: "50px" }}>
-            <Card.Title>{product.tenSanPham}</Card.Title>
-            <Card.Text>{product.thongTinSP}</Card.Text>
+          <Col md={8}>
+            <Card.Title className="mb-3">{product.tenSanPham}</Card.Title>
+            <Card.Text className="mb-3"style={{textAlign:"left"}}><span style={{fontWeight:"bold"}}>Mô Tả: </span>{product.thongTinSP}</Card.Text>
             <ListGroup variant="flush">
-              <Card.Text>
-                <b style={{ color: "red" }}>{formatPrice(product.donGia)}</b>
-              </Card.Text>
+              <h4 className="text-danger">{formatPrice(product.donGia)}</h4>
+
               <Row
-                xs="auto"
-                style={{
-                  marginLeft: "300px",
-                  width: "50%",
-                  borderRadius: "0px",
-                }}
+                className="align-items-center"
+                style={{ marginLeft: "280px" }}
               >
-                <Row>
-                  <InputGroup className="mb-3">
-                    <Col md={3} style={{ marginLeft: "10px" }}>
-                      <Button
-                        onClick={decreaseCount}
-                        variant="outline-dark"
-                        style={{ width: "37px" }}
-                      >
-                        -
-                      </Button>
-                    </Col>
-                    <Col md={3}>
-                      <Form.Control
-                        style={{
-                          width: "45px",
-                          textAlign: "center",
-                          marginLeft: "3px",
-                        }}
-                        value={count}
-                        aria-describedby="basic-addon1"
-                        onChange={changeCount}
-                      />
-                    </Col>
-                    <Col md={3} style={{ marginLeft: "13px" }}>
-                      <Button onClick={increaseCount} variant="outline-dark">
-                        +
-                      </Button>
-                    </Col>
-                  </InputGroup>
-                </Row>
-              </Row>
-              <ListGroup.Item>
-                <Col md="auto" style={{ marginRight: "10px" }}>
+                <Col xs="auto">
                   <Button
+                    onClick={decreaseCount}
                     variant="dark"
-                    style={{ height: "51px" }}
-                    onClick={handleAddToCart}
+                    style={{ width: "40px" }}
                   >
-                    <b>Thêm vào giỏ hàng</b>
+                    -
                   </Button>
                 </Col>
+                <Col xs="auto">
+                  <Form.Control
+                    style={{ width: "60px", textAlign: "center" }}
+                    value={count}
+                    onChange={changeCount}
+                    min={1}
+                    type="number"
+                  />
+                </Col>
+                <Col xs="auto">
+                  <Button
+                    onClick={increaseCount}
+                    variant="dark"
+                    style={{ width: "40px" }}
+                  >
+                    +
+                  </Button>
+                </Col>
+              </Row>
+
+              <ListGroup.Item className="text-center">
+                <Button variant="dark" onClick={handleAddToCart}>
+                  <b>Thêm vào giỏ hàng</b>
+                </Button>
               </ListGroup.Item>
             </ListGroup>
+            <ListGroup.Item className="text-left mt-3" style={{textAlign: "left"}}>
+                <ul style={{ listStyleType: "disc", paddingLeft: "20px" }}>
+                  <li>Đăng ký tài khoản để mua hàng nhận được nhiều ưu đãi hấp dẫn.</li>
+                  <li>Khi mua từ 5 sản phẩm trở lên bạn sẽ được giảm 10% giá trị đơn hàng.</li>
+                  <li>Khi tài khoản của bạn đã mua từ 10 sản phẩm trở lên sẽ được giảm 20% giá trị đơn hàng.(chỉ khi đơn hàng của bạn được 
+                    xác nhận giao thành công thì mới được tính)</li>
+                  <li>Nếu có cả 2 điều kiện trên thì bạn sẽ được giảm 30% giá trị đơn hàng.</li>
+                </ul>
+              </ListGroup.Item>
           </Col>
         </Row>
       </Container>

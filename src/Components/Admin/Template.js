@@ -5,7 +5,8 @@ import {
   GroupOutlined,
   UserOutlined,
   ProductOutlined,
-  ShoppingOutlined
+  ShoppingOutlined,
+  LineChartOutlined
 } from '@ant-design/icons';
 import { Button, Layout, Menu, theme, Dropdown, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
@@ -27,6 +28,9 @@ import OrderDoneManager from './Controller/OrderDoneManager';
 import CustomerAccManager from './Controller/CustomerAccManager';
 import ProfileManager from './Controller/ProfileManager';
 import StaffManager from './Controller/StaffManager';
+import MostSoldProductsChart from './Controller/MostSoldProducts';
+import TopCustomersChart from './Controller/TopCustomers';
+import RevenueByYearChart from './Controller/RevenueByYear';
 const { Header, Sider, Content } = Layout;
 
 const Template = () => {
@@ -170,11 +174,26 @@ const Template = () => {
 
             {
               key: "12",
-              icon: <UserOutlined />,
-              label: "Quản lí khuyến mãi",
+              icon: <LineChartOutlined />,
+              label: "Thống kê sản phẩm",
               onClick: () => handleMenuClick("12"),
               style:{textAlign: "left"}
             },
+            {
+              key:"14",
+              icon: <LineChartOutlined />,
+              label: "Thống kê khách hàng",
+              onClick: () => handleMenuClick("14"),
+              style:{textAlign: "left"}
+            },
+            {
+              key:"15",
+              icon: <LineChartOutlined />,
+              label: "Thống kê doanh thu",
+              onClick: () => handleMenuClick("15"),
+              style:{textAlign: "left"}
+            }
+            
             
           ]}
         />
@@ -233,7 +252,9 @@ const Template = () => {
           {selectedMenu === '9' && <OrderConfirmManager/>}
           {selectedMenu === '10' && <OrderDeliveryManager />}
           {selectedMenu === '11' && <OrderDoneManager/>}
-          
+          {selectedMenu === '12' && <MostSoldProductsChart/>}
+          {selectedMenu === '14' && <TopCustomersChart/>}
+          {selectedMenu === '15' && <RevenueByYearChart/>}
 
         </Content>
       </Layout>
