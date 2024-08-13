@@ -53,12 +53,12 @@ const ShipManager = () => {
       setIsModalVisible(false);
       notification.success({
         message: "Success",
-        description: "Shipping company added successfully.",
+        description: "Thêm đơn vị vận chuyển thành công",
       });
     } catch (error) {
       notification.error({
-        message: "Error",
-        description: "Failed to add shipping company.",
+        message: "Lỗi",
+        description: "Thêm đơn vị vận chuyển thất bại",
       });
     }
   };
@@ -82,8 +82,8 @@ const ShipManager = () => {
           });
         } catch (error) {
           notification.error({
-            message: "Error",
-            description: "Failed to update shipping company.",
+            message: "Lỗi",
+            description: "Sửa thông tin đơn vị vận chuyển thất bại",
           });
         }
       },
@@ -105,7 +105,7 @@ const ShipManager = () => {
         } catch (error) {
           notification.error({
             message: "Error",
-            description: "Failed to delete shipping company.",
+            description: "Xóa đơn vị vận chuyển thất bại",
           });
         }
       },

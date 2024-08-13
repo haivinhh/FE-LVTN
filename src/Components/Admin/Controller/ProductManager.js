@@ -34,8 +34,8 @@ const ProductManager = () => {
       setProducts(response.data);
     } catch (error) {
       notification.error({
-        message: "Error",
-        description: "Failed to fetch products.",
+        message: "Lỗi",
+        description: "Không thể hiển thi danh sách sản phẩm",
       });
     }
   };
@@ -46,8 +46,8 @@ const ProductManager = () => {
       setCategories(response.data);
     } catch (error) {
       notification.error({
-        message: "Error",
-        description: "Failed to fetch categories.",
+        message: "Lỗi",
+        description: "Không thể hiển thị danh mục sản phẩm",
       });
     }
   };
@@ -58,8 +58,8 @@ const ProductManager = () => {
       setPhoneLines(response.data);
     } catch (error) {
       notification.error({
-        message: "Error",
-        description: "Failed to fetch phone lines.",
+        message: "Lỗi",
+        description: "Không thể hiển thị dòng diện thoại",
       });
     }
   };
@@ -71,7 +71,7 @@ const ProductManager = () => {
       setIsModalVisible(false);
       notification.success({
         message: "Success",
-        description: "Product added successfully.",
+        description: "Thêm sản phẩm thành công",
       });
     } catch (error) {
       notification.error({
@@ -97,8 +97,8 @@ const ProductManager = () => {
           });
         } catch (error) {
           notification.error({
-            message: "Error",
-            description: "Failed to update product.",
+            message: "Lỗi",
+            description: "Sửa thông tin sản phẩm thất bại",
           });
         }
       },
@@ -119,8 +119,8 @@ const ProductManager = () => {
           });
         } catch (error) {
           notification.error({
-            message: "Error",
-            description: "Failed to delete product.",
+            message: "Lỗi",
+            description: "Xóa sản phẩm thất bại",
           });
         }
       },

@@ -279,6 +279,7 @@ const OrderDeliveryManager = () => {
                 <p>
                   Tổng Tiền: {formatPrice(selectedOrder.tongTienDH) || "N/A"}
                 </p>
+                <p>Nhân viên xác nhận: {selectedOrder.tenNhanVien || "N/A"}</p>
                 <p>
                   Trạng Thái:{" "}
                   <span style={getStatusStyle(selectedOrder.trangThai)}>

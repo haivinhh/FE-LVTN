@@ -18,14 +18,14 @@ const ChangePassword = ({ visible, onCancel, idUser }) => {
           await axiosAdmin.put("/api/customer/changepassword", { ...values, idUser });
           notification.success({
             message: "Success",
-            description: "Password changed successfully.",
+            description: "Thay đổi mật khẩu thành công",
           });
           onCancel();
           form.resetFields();
         } catch (error) {
           notification.error({
-            message: "Error",
-            description: "Failed to change password.",
+            message: "Lỗi",
+            description: "Thay đổi mật khẩu thất bại",
           });
         }
       })

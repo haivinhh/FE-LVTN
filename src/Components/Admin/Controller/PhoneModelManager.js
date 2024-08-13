@@ -41,8 +41,8 @@ const PhoneModelManager = () => {
       setPhoneModels(response.data);
     } catch (error) {
       notification.error({
-        message: "Error",
-        description: "Failed to fetch phone models.",
+        message: "Lỗi",
+        description: "Không thể hiển thị danh sách dòng điện thoại",
       });
     }
   };
@@ -53,8 +53,8 @@ const PhoneModelManager = () => {
       setPhoneTypes(response.data);
     } catch (error) {
       notification.error({
-        message: "Error",
-        description: "Failed to fetch phone types.",
+        message: "Lỗi",
+        description: "Không thể hiển thị danh sách loại điện thoại",
       });
     }
   };
@@ -66,12 +66,12 @@ const PhoneModelManager = () => {
       setIsModalVisible(false);
       notification.success({
         message: "Success",
-        description: "Phone model added successfully.",
+        description: "Thêm dòng điện thoại thành công",
       });
     } catch (error) {
       notification.error({
-        message: "Error",
-        description: "Failed to add phone model.",
+        message: "Lỗi",
+        description: "Thêm dòng điện thoại thất bại",
       });
     }
   };
@@ -91,12 +91,12 @@ const PhoneModelManager = () => {
           setEditingModel(null);
           notification.success({
             message: "Success",
-            description: "Phone model updated successfully.",
+            description: "Sửa dòng điện thoại thành công",
           });
         } catch (error) {
           notification.error({
-            message: "Error",
-            description: "Failed to update phone model.",
+            message: "Lỗi",
+            description: "Sửa dòng điện thoại thất bại",
           });
         }
       },
@@ -113,12 +113,12 @@ const PhoneModelManager = () => {
           fetchPhoneModels();
           notification.success({
             message: "Success",
-            description: "Phone model deleted successfully.",
+            description: "Xóa dòng điện thoại thành công",
           });
         } catch (error) {
           notification.error({
-            message: "Error",
-            description: "Failed to delete phone model.",
+            message: "Lỗi",
+            description: "Xóa dòng điện thoại thất bại",
           });
         }
       },
@@ -202,7 +202,7 @@ const PhoneModelManager = () => {
       >
         Thêm Dòng Điện Thoại
       </Button>
-      <Table columns={columns} dataSource={phoneModels} rowKey="idDongDT" />
+      <Table columns={columns} dataSource={phoneModels} rowKey="idDongDT" pagination={{ pageSize: 20 }}  />
       <Modal
         title={
           <div style={{ textAlign: "center" }}>

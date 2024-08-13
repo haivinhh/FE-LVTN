@@ -4,9 +4,9 @@ import Header from "../Common/Header";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Card from "react-bootstrap/Card";
-import Container from "react-bootstrap/esm/Container";
+import Container from "react-bootstrap/Container";
 import Carousel from "react-bootstrap/Carousel";
-import { Link } from "react-router-dom"; // Import Link from react-router-dom
+import { Link } from "react-router-dom";
 import http from "../HTTP/http";
 import banner1 from "../Icon/banner1.png";
 import banner2 from "../Icon/banner2.png";
@@ -26,10 +26,10 @@ const Home = () => {
       .then((response) => {
         console.log(response);
         // Filter products with odd idSanPham
-        const filteredProducts = response.data.filter(
-          (product) => product.idSanPham % 2 !== 0
-        );
-        setProducts(filteredProducts);
+       
+        // Select the last 20 products
+        const lastProducts = response.data.slice(-18);
+        setProducts(lastProducts);
       })
       .catch((error) => {
         console.error("There was an error fetching the products!", error);
@@ -72,8 +72,6 @@ const Home = () => {
                   to={`/sanpham/detail/${product.idSanPham}`}
                   className="text-dark no-underline"
                 >
-                  {" "}
-                
                   <Card.Img
                     variant="top"
                     src={product.hinhSP}

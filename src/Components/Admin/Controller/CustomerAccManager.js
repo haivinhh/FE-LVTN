@@ -38,8 +38,8 @@ const CustomerAccManager = () => {
       setCustomers(response.data);
     } catch (error) {
       notification.error({
-        message: "Error",
-        description: "Failed to fetch customers.",
+        message: "Lỗi",
+        description: "Không thể hiện danh sách khách hàng",
         duration: 1.5,
       });
     }
@@ -53,8 +53,8 @@ const CustomerAccManager = () => {
       setViewOrders(true);
     } catch (error) {
       notification.error({
-        message: "Error",
-        description: "Failed to fetch orders.",
+        message: "Lỗi",
+        description: "Không thể hiện danh sách khách hàng",
         duration: 1.5,
       });
     }
@@ -67,17 +67,17 @@ const CustomerAccManager = () => {
       setIsModalVisible(false);
       notification.success({
         message: "Success",
-        description: "Customer added successfully.",
+        description: "Thêm tài khoản thành công",
         duration: 1.5,
       });
     } catch (error) {
       // Extract the server message if available
       const errorMessage = error.response && error.response.data && error.response.data.message 
         ? error.response.data.message 
-        : "Failed to add customer.";
+        : "Thêm tài khoản thất bại";
         
       notification.error({
-        message: "Error",
+        message: "Lỗi",
         description: errorMessage,
         duration: 1.5,
       });
@@ -96,14 +96,14 @@ const CustomerAccManager = () => {
           setEditingCustomer(null);
           notification.success({
             message: "Success",
-            description: "Customer updated successfully.",
+            description: "Sửa thông tin khách hàng thành công",
             duration: 1.5,
           });
         } catch (error) {
           // Extract the server message if available
           const errorMessage = error.response && error.response.data && error.response.data.message 
             ? error.response.data.message 
-            : "Failed to update customer.";
+            : "Sửa thông tin khách hàng thất bại";
             
           notification.error({
             message: "Lỗi",
@@ -126,7 +126,7 @@ const CustomerAccManager = () => {
                 fetchCustomers();
                 notification.success({
                     message: "Success",
-                    description: "Customer deleted successfully.",
+                    description: "Xóa tài khoản khách hàng thành công",
                     duration: 1.5,
                 });
             } catch (error) {

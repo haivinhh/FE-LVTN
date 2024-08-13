@@ -37,8 +37,8 @@ const OrderConfirmManager = () => {
       setOrders(response.data);
     } catch (error) {
       notification.error({
-        message: "Error",
-        description: "Failed to fetch orders.",
+        message: "Lỗi",
+        description: "Không thể hiển thị đơn hàng",
       });
     }
   };
@@ -49,8 +49,8 @@ const OrderConfirmManager = () => {
       setShippingOptions(response.data);
     } catch (error) {
       notification.error({
-        message: "Error",
-        description: "Failed to fetch shipping options.",
+        message: "Lỗi",
+        description: "Không thể hiển thị đơn vị vận chuyển",
       });
     }
   };

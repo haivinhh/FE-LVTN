@@ -28,8 +28,8 @@ const PhoneTypeManager = () => {
       setPhoneTypes(response.data);
     } catch (error) {
       notification.error({
-        message: "Error",
-        description: "Failed to fetch phone types.",
+        message: "Lỗi",
+        description: "Không thể hiển thị loại điện thoại",
       });
     }
   };
@@ -41,12 +41,12 @@ const PhoneTypeManager = () => {
       setIsModalVisible(false);
       notification.success({
         message: "Success",
-        description: "Phone type added successfully.",
+        description: "Thêm loại điện thoại thành công",
       });
     } catch (error) {
       notification.error({
-        message: "Error",
-        description: "Failed to add phone type.",
+        message: "Lỗi",
+        description: "Thêm loại điện thoại thất bại",
       });
     }
   };
@@ -67,8 +67,8 @@ const PhoneTypeManager = () => {
           });
         } catch (error) {
           notification.error({
-            message: "Error",
-            description: "Failed to update phone type.",
+            message: "Lỗi",
+            description: "Cập nhật loại điện thoại thất bại",
           });
         }
       },
@@ -89,8 +89,8 @@ const PhoneTypeManager = () => {
           });
         } catch (error) {
           notification.error({
-            message: "Error",
-            description: "Failed to delete phone type.",
+            message: "Lỗi",
+            description: "xóa loại điện thoại thất bại",
           });
         }
       },

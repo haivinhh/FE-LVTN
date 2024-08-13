@@ -36,6 +36,7 @@ const CateManager = () => {
       notification.error({
         message: "Error",
         description: "Failed to fetch categories.",
+        duration: 1.5,
       });
     }
   };
@@ -47,12 +48,14 @@ const CateManager = () => {
       setIsModalVisible(false);
       notification.success({
         message: "Success",
-        description: "Category added successfully.",
+        description: "Thêm Danh Mục Sản Phẩm Thành Công",
+        duration: 1.5,
       });
     } catch (error) {
       notification.error({
         message: "Error",
         description: "Failed to add category.",
+        duration: 1.5,
       });
     }
   };
@@ -73,11 +76,13 @@ const CateManager = () => {
           notification.success({
             message: "Success",
             description: "Sửa thông tin danh mục thành công.",
+            duration: 1.5,
           });
         } catch (error) {
           notification.error({
             message: "Error",
             description: "Failed to update category.",
+            duration: 1.5,
           });
         }
       },
@@ -95,11 +100,13 @@ const CateManager = () => {
           notification.success({
             message: "Success",
             description: "Xóa danh mục thành công.",
+            duration: 1.5,
           });
         } catch (error) {
           notification.error({
-            message: "Error",
-            description: "Failed to delete category.",
+            message: "Lỗi",
+            description: `Không thể xóa danh mục ${idDanhMuc}`,
+            duration: 1.5,
           });
         }
       },
